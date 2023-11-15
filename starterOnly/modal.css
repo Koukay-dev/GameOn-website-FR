@@ -17,7 +17,6 @@ body {
   background-image: url("background.png");
   font-family: var(--font-default);
   font-size: 18px;
-  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -99,6 +98,12 @@ img {
     display: block;
     margin-top: -15px;
   }
+  .header-logo > img{
+    max-width: 160px;
+  }
+  .topnav{
+    padding-top: 15px;
+  }
 } 
 
 main {
@@ -108,11 +113,10 @@ main {
   padding-top: 0.5vw;
   padding-left: 2vw;
   padding-right: 2vw;
-  margin: 1px 20px 15px;
+  margin: auto;
   border-radius: 2rem;
   text-align: justify;
-
-
+  max-width: 1800px;
 }
 
 .modal-btn {
@@ -405,7 +409,7 @@ input[data-error]::after {
   font-size: 16px;
 }
 .hero-section {
-  min-height: 93vh;
+  max-height: 72vh;
   border-radius: 10px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -420,7 +424,6 @@ input[data-error]::after {
   color: #fff;
   position: relative;
   text-align: left;
-  min-width: 424px;
 }
 .hero-content::after {
   content: "";
@@ -462,6 +465,7 @@ input[data-error]::after {
   height: 100%;
   display: block;
   padding: 0;
+  object-fit: cover;
 }
 .copyrights {
   color: #fe142f;
@@ -478,10 +482,18 @@ footer {
   padding-right: 2vw;
   margin: 0 20px;
 }
+@media screen and (max-width:950px){
+  .hero-headline{
+    font-size: 4.5rem;
+  }
+}
+
 @media screen and (max-width: 800px) {
   .hero-section {
     display: block;
     box-shadow: unset;
+    max-height: none;
+
   }
   .hero-content {
     background: #fff;
@@ -495,7 +507,8 @@ footer {
     display: none;
   }
   .hero-headline {
-    font-size: 4.5rem;
+    font-size: 40px;
+    font-weight: 500;
     white-space: normal;
   }
   .hero-text {
