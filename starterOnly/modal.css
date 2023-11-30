@@ -38,6 +38,7 @@ img {
 }
 .main-navbar {
     float: right;
+    position: relative;
 }
 .topnav a {
   float: left;
@@ -96,7 +97,6 @@ img {
   .topnav a.icon {
     float: right;
     display: block;
-    margin-top: -15px;
   }
   .header-logo > img{
     max-width: 160px;
@@ -111,8 +111,8 @@ main {
   font-weight: bolder;
   color: black;
   padding-top: 0.5vw;
-  padding-left: 2vw;
-  padding-right: 2vw;
+  padding-left: 4vw;
+  padding-right: 4vw;
   margin: auto;
   border-radius: 2rem;
   text-align: justify;
@@ -482,6 +482,24 @@ footer {
   padding-right: 2vw;
   margin: 0 20px;
 }
+
+#on-top-message{
+  display:none;
+  position: absolute;
+  bottom: 50%;
+  width: 100%;
+  & > h4{
+    padding: 20px;
+    border-radius: 8px;
+    margin:auto;
+    text-align: center;
+    margin: 25px;
+  } 
+}
+
+
+
+
 @media screen and (max-width:950px){
   .hero-headline{
     font-size: 4.5rem;
