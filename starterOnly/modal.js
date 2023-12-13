@@ -12,12 +12,15 @@ function launchModal() {
 }
 
 // launch modal form
-function closeModal() {
+function closeModal(callback) {
   modalbg.style.display = "none";
+  if(callback !== null){
+    callback();
+  }
 }
 
 // Fonction validation
-function validate(){
+function validate(event){
   var firstName = document.getElementById('first');
   var lastName = document.getElementById('last');
   var email = document.getElementById('email');
@@ -26,30 +29,34 @@ function validate(){
   var location = document.querySelector('input[name="location"]');
   var checkbox1 = document.getElementById('checkbox1');
 
+  console.log('validate');
   
-  if (
-    validateText(firstName) &&
-    validateText(lastName) &&
-    validateEmail(email) &&
-    validateBirthdate(birthdate) &&
-    validateQuantity(quantity) &&
-    validateCheckbox(location) &&
-    validateCheckbox(checkbox1)
-    ){
-    validationMsg(true);
-    setTimeout(closeModal, 2500);  
+  if (  validateText(firstName) &&
+        validateText(lastName) &&
+        validateEmail(email) &&
+        validateBirthdate(birthdate) &&
+        validateQuantity(quantity) &&
+        validateCheckbox(location) &&
+        validateCheckbox(checkbox1)
+      ){
+        validationMsg(event);
+        return true;
   }
 
-  
+  console.log('erreur');
+  event.preventDefault();
+  return false;
 }
 
 
-function validationMsg(){
+
+function validationMsg(event){
   const validateMsg = document.getElementById('on-top-message');
-  const validateMsgText = document.getElementById('on-top-message-text');
-  validateMsgText.innerText = "Merci ! Votre réservation a été reçue."
-  validateMsgText.style.backgroundColor = '#06a606';
-  validateMsg.style.display = 'block';
+  validateMsg.querySelectorAll('.validateByClosing').forEach((elem)=>{
+    elem.addEventListener('click', closeModal(event.submit()))
+  });
+
+  validateMsg.style.display = 'flex';
 }
 
 /**
@@ -58,14 +65,17 @@ function validationMsg(){
  * @param {string} msg 
  */
 function showValidity(DOMelement , msg = ''){
+    console.log(msg);
+    console.log(DOMelement);
     DOMelement.setCustomValidity(msg);
     DOMelement.reportValidity();
+    
 }
 
 
 function validateText(DOMelement){
-  const regexTest = '/^[a-zA-Z-]{2,}$/';
-  if (DOMelement.innerText.test(regexTest)){
+  const regexTest = /^[a-zA-Z-]{2,}$/;
+  if (regexTest.test(DOMelement.value)){
     showValidity(DOMelement);
     return true;
   }
@@ -75,9 +85,9 @@ function validateText(DOMelement){
 }
 
 function validateEmail(DOMelement){
-  const emailRegex = '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-  if (DOMelement.innerText.test(emailRegex)){
+  if (emailRegex.test(DOMelement.value)){
     showValidity(DOMelement);
     return true;
   }
@@ -88,6 +98,7 @@ function validateEmail(DOMelement){
 
 function validateQuantity(DOMelement) {
   var quantity = DOMelement.value;
+  console.log(quantity);
   if (quantity < 0 || quantity > 99) {
     showValidity(DOMelement,'Veuillez entrer un nombre entre 0 et 99 pour le nombre de tournois.');
       return false;
@@ -100,10 +111,10 @@ function validateQuantity(DOMelement) {
 function validateBirthdate(DOMelement) {
   var birthdateInput = DOMelement.value;
 
-  var birthdate = new Date(birthdateInput.value);
+  var birthdate = new Date(birthdateInput);
   var currentDate = new Date();
 
-  if (birthdateInput.value === '' || (birthdate > currentDate)) {
+  if (birthdateInput === '' || birthdate > currentDate) {
     showValidity(DOMelement,'Vous devez entrer votre date de naissance.');
     return false;
   }
@@ -114,15 +125,15 @@ function validateBirthdate(DOMelement) {
 
 function validateCheckbox(DOMelement){
   
-  const checked = () => {
-    showValidity(DOMelement);
+  const checked = (elem) => {
+    showValidity(elem);
     return true;
   };
   
   if(Array.isArray(DOMelement)){
     DOMelement.forEach((elem) => {
       if(elem.checked){ // Si il y a au moins un élément qui est checked
-        return checked;
+        return checked(elem);
       }
     });
     showValidity(DOMelement[0], "Vous devez choisir une option.");
@@ -131,13 +142,31 @@ function validateCheckbox(DOMelement){
   } else {
 
     if(DOMelement.checked){
-      return checked;
+      return checked(DOMelement);
     }
   }
 
   showValidity(DOMelement, "Vous devez vérifier que vous acceptez les termes et conditions.");
   return false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // DOM Elements
@@ -154,7 +183,26 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 modalCloseBtn.addEventListener('click', closeModal);
 
 formReserve.addEventListener('submit', (event) => {
-  event.preventDefault();
-  validate();
-})
+  console.log('submit');
+  validate(event);
+});
+
+
+
+
+// Sélectionnez tous les divs avec la classe "formData"
+var divsFormData = document.querySelectorAll('.formData');
+var everyInputs = [];
+divsFormData.forEach(function(div) {
+    var inputsDansDiv = div.querySelectorAll('input');
+    inputsDansDiv.forEach(function(input) {
+        everyInputs.push(input);
+    });
+});
+
+everyInputs.forEach((input) => {
+  input.addEventListener('input', () => {
+    showValidity(input);  // Permet pour chaque input si il y a eu une erreur de remettre l'état à 0 dès qu'il y a un changement
+  })
+});
 
