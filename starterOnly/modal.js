@@ -1,3 +1,5 @@
+import Annotation from './annotation.class.js';
+
 function editNav() {
   var x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
@@ -9,6 +11,8 @@ function editNav() {
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
+  const validateMsg = document.getElementById('on-top-message');
+  validateMsg.style.display = 'none';
 }
 
 // launch modal form
@@ -20,43 +24,41 @@ function closeModal(callback) {
 }
 
 // Fonction validation
-function validate(event){
-  var firstName = document.getElementById('first');
-  var lastName = document.getElementById('last');
-  var email = document.getElementById('email');
-  var birthdate = document.getElementById('birthdate');
-  var quantity = document.getElementById('quantity');
-  var location = document.querySelector('input[name="location"]');
-  var checkbox1 = document.getElementById('checkbox1');
+function validate(form){
+
+  var firstName = validateText(document.getElementById('first'));
+  var lastName = validateText(document.getElementById('last'));
+  var email = validateEmail(document.getElementById('email'));
+  var birthdate = validateBirthdate(document.getElementById('birthdate'));
+  var quantity = validateQuantity(document.getElementById('quantity'));
+  var location = validateCheckbox(Array.from(document.querySelectorAll('input[name="location"]')));
+  var checkbox1 = validateCheckbox(document.getElementById('checkbox1'));
 
   console.log('validate');
   
-  if (  validateText(firstName) &&
-        validateText(lastName) &&
-        validateEmail(email) &&
-        validateBirthdate(birthdate) &&
-        validateQuantity(quantity) &&
-        validateCheckbox(location) &&
-        validateCheckbox(checkbox1)
-      ){
-        validationMsg(event);
-        return true;
+  if (firstName && lastName && email && birthdate && quantity && location && checkbox1){
+    validationMsg(form);
+    return true;
   }
 
   console.log('erreur');
-  event.preventDefault();
+  
   return false;
 }
 
 
 
-function validationMsg(event){
+function validationMsg(form){
   const validateMsg = document.getElementById('on-top-message');
+  validateMsg.style.display = 'flex';
   validateMsg.querySelectorAll('.validateByClosing').forEach((elem)=>{
-    elem.addEventListener('click', closeModal(event.submit()))
+    elem.addEventListener('click',() => {
+      closeModal(form.reset())
+      validateMsg.style.display = 'none';
+    });
   });
 
-  validateMsg.style.display = 'flex';
+ 
 }
 
 /**
@@ -65,10 +67,14 @@ function validationMsg(event){
  * @param {string} msg 
  */
 function showValidity(DOMelement , msg = ''){
-    console.log(msg);
-    console.log(DOMelement);
-    DOMelement.setCustomValidity(msg);
-    DOMelement.reportValidity();
+
+    const newAnnot = new Annotation(DOMelement, msg);
+    newAnnot.isError();
+    newAnnot.show();
+
+    document.body.addEventListener('click', () =>{
+      newAnnot.hide()
+    });
     
 }
 
@@ -76,7 +82,6 @@ function showValidity(DOMelement , msg = ''){
 function validateText(DOMelement){
   const regexTest = /^[a-zA-Z-]{2,}$/;
   if (regexTest.test(DOMelement.value)){
-    showValidity(DOMelement);
     return true;
   }
   showValidity(DOMelement, 'Veuillez entrer 2 caractères valides (caractères alphabétique et tirets autorisés) ou plus pour le champ du nom.')
@@ -88,7 +93,6 @@ function validateEmail(DOMelement){
   const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
   if (emailRegex.test(DOMelement.value)){
-    showValidity(DOMelement);
     return true;
   }
   showValidity(DOMelement, 'Veuillez entrer un email valide.');
@@ -98,12 +102,11 @@ function validateEmail(DOMelement){
 
 function validateQuantity(DOMelement) {
   var quantity = DOMelement.value;
-  console.log(quantity);
-  if (quantity < 0 || quantity > 99) {
+  if (quantity < 0 || quantity > 99 || quantity === '') {
     showValidity(DOMelement,'Veuillez entrer un nombre entre 0 et 99 pour le nombre de tournois.');
       return false;
   }
-  showValidity(DOMelement);
+  
   return true;
 }
 
@@ -118,43 +121,37 @@ function validateBirthdate(DOMelement) {
     showValidity(DOMelement,'Vous devez entrer votre date de naissance.');
     return false;
   }
-  showValidity(DOMelement);
+  
   return true;
 }
 
 
 function validateCheckbox(DOMelement){
   
-  const checked = (elem) => {
-    showValidity(elem);
-    return true;
-  };
-  
+  var validCheckbox = false;
+
   if(Array.isArray(DOMelement)){
     DOMelement.forEach((elem) => {
       if(elem.checked){ // Si il y a au moins un élément qui est checked
-        return checked(elem);
+        validCheckbox = true;
       }
     });
-    showValidity(DOMelement[0], "Vous devez choisir une option.");
+    if (validCheckbox){
+      return true;
+    }
+    showValidity(DOMelement[DOMelement.length - 1], "Vous devez choisir une option.");
     return false;
 
   } else {
 
     if(DOMelement.checked){
-      return checked(DOMelement);
+      return true;
     }
   }
 
-  showValidity(DOMelement, "Vous devez vérifier que vous acceptez les termes et conditions.");
+  showValidity(DOMelement.nextElementSibling, "Vous devez vérifier que vous acceptez les termes et conditions.");
   return false;
 }
-
-
-
-
-
-
 
 
 
@@ -174,35 +171,22 @@ const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formReserve = document.getElementById("form-reserve");
 const formData = document.querySelectorAll(".formData");
-const modalCloseBtn = document.querySelector(".close");
+const modalCloseBtns= document.querySelectorAll(".close");
+const btnNav = document.getElementById('btnNav');
 
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
-modalCloseBtn.addEventListener('click', closeModal);
+modalCloseBtns.forEach( (element) => {
+  element.addEventListener('click', closeModal)
+});
+
+btnNav.addEventListener('click',editNav);
 
 formReserve.addEventListener('submit', (event) => {
   console.log('submit');
-  validate(event);
-});
-
-
-
-
-// Sélectionnez tous les divs avec la classe "formData"
-var divsFormData = document.querySelectorAll('.formData');
-var everyInputs = [];
-divsFormData.forEach(function(div) {
-    var inputsDansDiv = div.querySelectorAll('input');
-    inputsDansDiv.forEach(function(input) {
-        everyInputs.push(input);
-    });
-});
-
-everyInputs.forEach((input) => {
-  input.addEventListener('input', () => {
-    showValidity(input);  // Permet pour chaque input si il y a eu une erreur de remettre l'état à 0 dès qu'il y a un changement
-  })
+  event.preventDefault()
+  validate(formReserve);
 });
 
