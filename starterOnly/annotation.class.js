@@ -21,7 +21,7 @@ class Annotation {
 
     _createDOMElement(){
         const parentContainer = document.createElement('div'); // parent qui va contenir l'élément target puis l'annotation
-        parentContainer.style.position = 'relative';
+        //parentContainer.style.position = 'relative';
 
         this.annotationContainer = document.createElement('div');
         this.annotationContainer.classList.add('annotation');
@@ -48,11 +48,19 @@ class Annotation {
     hide(){
         if(this.element){
             this.element.remove();
+            //à enlever plus tard | debut
+            this.target.style.border = "";
+            //à enlever plus tard | fin
         }
     }
 
     isError() {
         this._clearClasses();
+        //à enlever plus tard | debut
+        if (this.target.tagName.toLowerCase() === 'input'){
+            this.target.style.border = "2px solid #FF4E60"; 
+        }
+        //à enlever plus tard | fin
         this.annotationContainer.classList.add('annotation-error');
     }
 
