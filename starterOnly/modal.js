@@ -139,7 +139,17 @@ function validateCheckbox(DOMelement){
     if (validCheckbox){
       return true;
     }
-    showValidity(DOMelement[DOMelement.length - 1], "Vous devez choisir une option.");
+    // Pour cibler le label 
+    var dernierElement = DOMelement[DOMelement.length - 1];
+    var prochainElement = dernierElement.nextElementSibling;
+
+    if (prochainElement) {
+      showValidity(prochainElement , "Vous devez choisir une option.");
+    } else {
+      showValidity(dernierElement , "Vous devez choisir une option.");
+
+    }
+    //showValidity(DOMelement[DOMelement.length - 1] , "Vous devez choisir une option.");
     return false;
 
   } else {
