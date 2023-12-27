@@ -1,5 +1,8 @@
 import Annotation from './annotation.class.js';
 
+// ========== Fonction ========== 
+
+
 function editNav() {
   var x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
@@ -163,6 +166,7 @@ function validateCheckbox(DOMelement){
   return false;
 }
 
+// ========== Fonction ========== 
 
 
 
@@ -180,7 +184,6 @@ function validateCheckbox(DOMelement){
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formReserve = document.getElementById("form-reserve");
-const formData = document.querySelectorAll(".formData");
 const modalCloseBtns= document.querySelectorAll(".close");
 const btnNav = document.getElementById('btnNav');
 
