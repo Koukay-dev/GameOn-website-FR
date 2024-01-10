@@ -105,7 +105,7 @@ function validateEmail(DOMelement){
 
 function validateQuantity(DOMelement) {
   var quantity = DOMelement.value;
-  if (quantity < 0 || quantity > 99 || quantity === '') {
+  if (isNaN(quantity) ||quantity < 0 || quantity > 99 || quantity === '') {
     showValidity(DOMelement,'Veuillez entrer un nombre entre 0 et 99 pour le nombre de tournois.');
       return false;
   }
@@ -115,12 +115,13 @@ function validateQuantity(DOMelement) {
 
 
 function validateBirthdate(DOMelement) {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   var birthdateInput = DOMelement.value;
 
   var birthdate = new Date(birthdateInput);
   var currentDate = new Date();
 
-  if (birthdateInput === '' || birthdate > currentDate) {
+  if (!dateRegex.test(birthdateInput)|| birthdateInput === '' || birthdate > currentDate) {
     showValidity(DOMelement,'Vous devez entrer votre date de naissance.');
     return false;
   }
@@ -167,11 +168,6 @@ function validateCheckbox(DOMelement){
 }
 
 // ========== Fonction ========== 
-
-
-
-
-
 
 
 
